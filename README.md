@@ -1,4 +1,4 @@
-# HTML5-App
+# HTML5+ App / HTML5 Plus
 >这是一个利用H5+ APP框架实现的移动端APP项目。它不是webApp，而是安装在手机本地的原生APP。
 项目很简单，就是一个web网站外面嵌套一个简单的浏览器。
 
