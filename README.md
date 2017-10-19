@@ -15,19 +15,17 @@ HTML + CSS + JS + H5+APP
 ### 安装启动步骤：
 ``` bash
 · git clone到本地
-· 下载HBuilder客户端
+· 下载HBuilder客户端(HBuilder也是一款国产很好用的前端编辑器)
 · 用HBuilder打开文件夹
 · 点击HBuilder菜单栏的发布→发布为原生安装包→根据提示生成即可
 · 将安装包下载安装在自己手机上
 ```
 
 ### 项目截图：
-  <img src='img/md_01.gif' width='48%'> <img src='img/md_02.gif' width='48%'>
+  <img src='img/md_01.png' width='46%'>    <img src='img/md_02.png' width='46%'>
 
 ### 项目说明：
-``` bash
    项目虽然简单，但却为咱前端进军原生APP领巾提供一条便捷通道。该项目只是一个入门，我们还可以结合开发文档实现更多对硬件的操作，开发出功能强大的APP。
-```
 
 ### 项目用于学习交流, 转载请注明出处
 
