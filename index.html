@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>好运贴</title>
+		<script>
+			(function(doc, win) {
+				var docEl = doc.documentElement,
+					resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+					recalc = function() {
+						var clientWidth = docEl.clientWidth;
+						if(!clientWidth) return;
+						if(clientWidth >= 640) {
+							docEl.style.fontSize = '100px';
+						} else {
+							docEl.style.fontSize = 100 * (clientWidth / 640) + 'px';
+						}
+					};
+				recalc();
+				win.addEventListener(resizeEvt, recalc, false);
+			})(document, window);
+		</script>
+		<link rel="stylesheet" type="text/css" href="css/common.css" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+	</head>
+
+	<body>
+		<ul class="nav">
+			<li>首页</li>
+			<li>外汇</li>
+			<li>贵金属</li>
+			<li>其他</li>
+		</ul>
+		<script type="text/javascript" src="js/jquery-1.11.3.js"></script>
+		<script type="text/javascript">
+			// 扩展API是否准备好，如果没有则监听“plusready"事件
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+
+			var strategies = [
+				[{
+					firstRun: true
+				}, 'http://m.hytips.com/', 'page0'],
+				[{
+					firstRun: true
+				}, 'http://m.hytips.com/forex/', 'page1'],
+				[{
+					firstRun: true
+				}, 'http://m.hytips.com/gold/', 'page2'],
+				[{
+					firstRun: true
+				}, 'index2.html', 'page3']
+			];
+			var addSubPage = function(number) { //第一次点击，则根据不同的number添加显示不同的子页面
+				var indexPage = plus.webview.getLaunchWebview(); //获取首页webview
+				var start = true; //判断是否是程序刚启动，此项影响栈顶的页面是否隐藏
+				function forwardButton(e) {
+					subPage.forward();
+				}
+
+				function backButton(e) {
+					subPage.back();
+				}
+				var subPage = plus.webview.create(strategies[number][1], strategies[number][2], {
+					top: '0px',
+					bottom: '42px',
+					popGesture: 'hide',
+					titleNView: {
+						backgroundColor: '#eee',
+						progress: {
+							color: '#0000FF'
+						},
+						splitLine: {
+							color: '#666'
+						},
+						type: "default",
+						autoBackButton: false,
+						buttons: [{
+							text: '<',
+							fontWeight: 'bold',
+							fontSize: '20px',
+							float: 'left',
+							colorPressed: "rgba(0,0,255,0.5)",
+							onclick: backButton
+						}, {
+							text: '>',
+							fontWeight: 'bold',
+							fontSize: '20px',
+							float: 'right',
+							colorPressed: "rgba(0,0,255,0.5)",
+							onclick: forwardButton
+						}]
+					}
+				});
+				return function() {
+					if(!start) {
+						plus.webview.getTopWebview().hide("fade-out", 2000); //栈顶的页面隐藏
+						start = false;
+					}
+					subPage.show('slide-in-right', 300); //新建页面显示
+					strategies[number][0].firstRun = false; //第一点击转台改为false
+
+				}
+			};
+
+			function switchSubPage(number) { //不是第一次点击，则直接切换子页面
+				plus.webview.getTopWebview().hide("fade-out", 2000); //栈顶的页面隐藏
+				plus.webview.getWebviewById(strategies[number][2]).show('slide-in-right', 300); //显示该id的页面
+			}
+
+			function plusReady() {
+				// 在Android5以上设备，如果默认没有开启硬件加速，则强制设置开启
+				if(!plus.webview.defaultHardwareAccelerated() && parseInt(plus.os.version) >= 5) {
+					styles.hardwareAccelerated = true;
+				}
+				plus.key.addEventListener('backbutton', function() {
+					plus.webview.currentWebview().canBack(function(e) {
+						if(e.canBack) { //判断是否可前进
+							plus.webview.currentWebview().back();
+						} else {
+							alert('即将退出程序')
+							plus.runtime.quit();
+						}
+					});
+				}, false);
+
+				addSubPage(0)(); //初始化时加载首页
+				$(".nav li:first-child").addClass('navActive'); //初始化加载按钮样式
+
+				var prevNumber = 0;
+				$(".nav").on('click', 'li', function() {
+					var liNumber = $(this).index();
+					if(liNumber == prevNumber) { //判断当前点击的按钮是不是和之前点击的一样
+						return
+					} else {
+						$(".nav li").removeClass('navActive');
+						$(this).addClass('navActive');
+						if(strategies[liNumber][0].firstRun) { //判断是不是第一次运行
+							addSubPage(liNumber)();
+						} else { //如果不是第一运行，则直接显示
+							switchSubPage(liNumber);
+						}
+					}
+					prevNumber = liNumber;
+				})
+			}
+		</script>
+	</body>
+
+</html>
